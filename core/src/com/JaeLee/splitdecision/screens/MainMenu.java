@@ -53,11 +53,11 @@ public class MainMenu implements Screen{
         table = new Table(skin);
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        white = new BitmapFont(Gdx.files.internal("mainFont.fnt"));
+        white = new BitmapFont(Gdx.files.internal("font/mainFont.fnt"));
 
         TextButtonStyle textButtonStyle = new TextButtonStyle();
-        textButtonStyle.up = skin.getDrawable("MainButton.up.9");
-        textButtonStyle.down = skin.getDrawable("MainButton.down.9");
+        textButtonStyle.up = skin.getDrawable("MainButton.up");
+        textButtonStyle.down = skin.getDrawable("MainButton.down");
         textButtonStyle.pressedOffsetX = 1;
         textButtonStyle.pressedOffsetY = -1;
         textButtonStyle.font = white;
@@ -80,7 +80,8 @@ public class MainMenu implements Screen{
         });
         game.pad(15);
 
-        instructions = new TextButton("GAME", textButtonStyle);
+        instructions = new TextButton("INSTRUCTIONS", textButtonStyle);
+        instructions.pad(15);
         //TODO give function to instructions button
 
         title = new Label("Split Decision", new Label.LabelStyle(white, Color.WHITE));
