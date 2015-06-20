@@ -46,7 +46,7 @@ public class Logo implements Screen{
         tweenManager = new TweenManager();
         Tween.registerAccessor(Sprite.class, new SpriteAccessor());
         Tween.set(logoScreen, SpriteAccessor.ALPHA).target(0).start(tweenManager);
-        Tween.to(logoScreen, SpriteAccessor.ALPHA, 2).target(1).repeatYoyo(1, 3).setCallback(new TweenCallback() {
+        Tween.to(logoScreen, SpriteAccessor.ALPHA, 1).target(1).repeatYoyo(1, 1).setCallback(new TweenCallback() {
             @Override
             public void onEvent(int type, BaseTween<?> source) {
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenu());

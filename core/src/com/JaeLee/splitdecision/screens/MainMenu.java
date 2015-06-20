@@ -117,6 +117,9 @@ public class MainMenu implements Screen{
 
     @Override
     public void dispose() {
-
+        stage.dispose();
+        white.dispose();
+        skin.dispose();
+        atlas.dispose();
     }
 }
