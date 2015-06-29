@@ -14,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import static com.badlogic.gdx.scenes.scene2d.ui.TextButton.*;
 
@@ -38,7 +40,10 @@ public class MainMenu implements Screen{
 
     @Override
     public void resize(int width, int height) {
-
+        System.out.println(width + " " + height);
+        stage.setViewport(new StretchViewport( Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        stage.getViewport().update( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        table.invalidateHierarchy();
     }
 
     @Override
@@ -51,6 +56,7 @@ public class MainMenu implements Screen{
         skin = new Skin(atlas);
 
         table = new Table(skin);
+        table.setFillParent(true);
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         white = new BitmapFont(Gdx.files.internal("font/mainFont.fnt"));
