@@ -40,7 +40,6 @@ public class MainMenu implements Screen{
 
     @Override
     public void resize(int width, int height) {
-        System.out.println(width + " " + height);
         stage.setViewport(new StretchViewport( Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         stage.getViewport().update( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         table.invalidateHierarchy();
