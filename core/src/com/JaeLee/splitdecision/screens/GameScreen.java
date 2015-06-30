@@ -20,6 +20,9 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
+import com.badlogic.gdx.physics.box2d.joints.RopeJoint;
+import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.Array;
 
 public class GameScreen implements Screen {
@@ -188,6 +191,9 @@ public class GameScreen implements Screen {
         bodyDef.type = BodyDef.BodyType.StaticBody;
         bodyDef.position.set(0,0);
 
+        //MathUtils random is inclusive on both ends.
+        System.out.println(MathUtils.random(0, 5));
+
         //ground shape - a chain shape goes from vertices to vertices.
         ChainShape groundShape = new ChainShape();
         groundShape.createChain(new Vector2[]{new Vector2(-10, 1), new Vector2(10, 1), new Vector2(10, -1), new Vector2(-10, -1), new Vector2(-10, 1)});
@@ -205,6 +211,34 @@ public class GameScreen implements Screen {
         brickSprite.setOrigin(brickSprite.getWidth()/2f, brickSprite.getHeight()/2f);
         floor.setUserData(brickSprite);
 
+        bodyDef.position.y = 9;
+
+        PolygonShape boxTwo = new PolygonShape();
+        boxTwo.setAsBox(.25f, .25f);
+
+        fixtureDef.shape = boxTwo;
+
+        Body otherBox = world.createBody(bodyDef);
+        otherBox.createFixture(fixtureDef);
+
+        //Using Joints. Make defiition.
+        DistanceJointDef ditanceJointDef = new DistanceJointDef();
+        ditanceJointDef.bodyA = otherBox;
+        ditanceJointDef.bodyB = box;
+        ditanceJointDef.length = 5;
+
+        world.createJoint(ditanceJointDef);
+
+        RopeJointDef ropeJointDef = new RopeJointDef();
+        ropeJointDef.bodyA = box;
+        ropeJointDef.bodyB = floor;
+        ropeJointDef.maxLength = 20;
+        ropeJointDef.localAnchorA.set(0,0);
+        ropeJointDef.localAnchorB.set(0,0);
+
+        world.createJoint(ropeJointDef);
+
+        boxTwo.dispose();
         groundShape.dispose();
         //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     }

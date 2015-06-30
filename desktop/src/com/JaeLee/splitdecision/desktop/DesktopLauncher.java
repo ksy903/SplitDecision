@@ -7,8 +7,8 @@ import com.JaeLee.splitdecision.SplitDecision;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 1000;
-		config.width = 800;
+		config.height = 800;
+		config.width = 1000;
 		config.vSyncEnabled = true;
 		new LwjglApplication(new SplitDecision(), config);
 	}
