@@ -8,8 +8,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -20,6 +18,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.Random;
 
 public class GameMode implements Screen {
 
@@ -37,18 +37,19 @@ public class GameMode implements Screen {
             new Vector2(-0.5f, -((float)Gdx.graphics.getHeight() / 2) / metersToPixels),
             new Vector2(0.5f, -((float)Gdx.graphics.getHeight() / 2) / metersToPixels),
             new Vector2(0.5f, ((float)Gdx.graphics.getHeight()/2) / metersToPixels)};
-    private float speed = 15;
+    private float speed = 20;
     private BodyDef bodyDef = new BodyDef();
     private FixtureDef fixtureDef = new FixtureDef();
     private Array<Body> tmpBodies = new Array<Body>();
+    public static int bestCount = 0;
+    private int currentCount = 0;
 
     //Keeping objects in right size.
     private static final int VIRTUAL_WIDTH = 1920;
     private static final int VIRTUAL_HEIGHT = 1080;
     private static final float ASPECT_RATIO = (float)VIRTUAL_WIDTH / (float)VIRTUAL_HEIGHT;
     private Rectangle viewport;
-    private float leftS2 = .5f, leftE2 = 11.5f, rightS2 = 16.5f, rightE2 = 26.5f, myP1 = .5f;
-    private float leftS1 = .5f, leftE1 = 11.5f, rightS1 = 16.5f, rightE1 = 26.5f, myP2 = .5f;
+    private float left1 = 10f, left2 = 10f, right1 = 10f, right2 = 10f;
     float scale;
 
     /*
@@ -64,26 +65,41 @@ public class GameMode implements Screen {
 
         world.step(TIMESTEP, VELOCITYITERATIONS, POSITIONITERATION);
 
-        camera.position.set(0, 0, 0);
-        camera.update();
         Gdx.gl.glViewport((int) viewport.x, (int) viewport.y, (int) viewport.width, (int) viewport.height);
 
         world.getBodies(tmpBodies);
 
         for(Body body:tmpBodies){
             if(body != null && body.getUserData() instanceof ObjectUserData){
-                if(body.getPosition().y <= ((float)Gdx.graphics.getHeight()/2/metersToPixels)-.5f &&!((ObjectUserData) body.getUserData()).reproduced){
-                    makeRow();
+                if(!((ObjectUserData) body.getUserData()).reproduced && body.getPosition().y <= ((float)Gdx.graphics.getHeight()/2/metersToPixels)){
                     ((ObjectUserData) body.getUserData()).reproduced = true;
+                    changeDirection();
+                    if(((ObjectUserData) body.getUserData()).type == 0){
+                        makeRowLeft1();
+                    }
+                    else if(((ObjectUserData) body.getUserData()).type == 1){
+                        makeRowLeft2();
+                    }
+                    else if(((ObjectUserData) body.getUserData()).type == 2){
+                        makeRowLeft3();
+                    }
+                    else if(((ObjectUserData) body.getUserData()).type == 3){
+                        makeRowLeft4();
+                    }
                 }
                 if(body.getPosition().y < -((float)Gdx.graphics.getHeight()/2/metersToPixels) - .5f){
+                    currentCount++;
                     world.destroyBody(body);
                 }
             }
         }
-        gravity += 0.01;
+        if(shipLeft.getPosition().y + 0.25f < -((float)Gdx.graphics.getHeight()/2/metersToPixels) || shipRight.getPosition().y + 0.25f < -((float)Gdx.graphics.getHeight()/2/metersToPixels)){
+            if(currentCount/4 > bestCount)
+                bestCount = currentCount/4;
+            ((Game)Gdx.app.getApplicationListener()).setScreen(new EndScreen());
+        }
+        gravity -= 0.001;
         debugRenderer.render(world, camera.combined);
-
     }
 
     @Override
@@ -104,23 +120,23 @@ public class GameMode implements Screen {
         {
             scale = (float)width/(float)VIRTUAL_WIDTH;
         }
-        System.out.println(scale);
         float w = (float)VIRTUAL_WIDTH*scale;
         float h = (float)VIRTUAL_HEIGHT*scale;
         viewport = new Rectangle(crop.x, crop.y, w, h);
-        camera.viewportWidth = width/metersToPixels+5;
-        camera.viewportHeight = height/metersToPixels+5;
+        camera.viewportWidth = width/metersToPixels;
+        camera.viewportHeight = height/metersToPixels;
         camera.update();
     }
 
     @Override
     public void show() {
 
-        gravity = -9.81f;
+        gravity = -9.8f;
         world = new World(new Vector2(0, gravity), true);
         debugRenderer = new Box2DDebugRenderer();
 
         camera = new OrthographicCamera(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+        camera.position.set(0, 0, 0);
 
         //----------------------------------------------------------------------------------------
         bodyDef.type = BodyDef.BodyType.StaticBody;
@@ -223,7 +239,10 @@ public class GameMode implements Screen {
                 return true;
             }
         });
-        makeRow();
+        makeRowLeft1();
+        makeRowLeft2();
+        makeRowLeft3();
+        makeRowLeft4();
     }
 
     @Override
@@ -245,16 +264,70 @@ public class GameMode implements Screen {
     public void dispose() {
 
     }
-    private void makeRow(){
+    private void makeRowLeft1(){
         PolygonShape brickShape = new PolygonShape();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.gravityScale = 1;
-        bodyDef.position.set(-((float)Gdx.graphics.getWidth()/2/metersToPixels)+1+((leftE1-leftS1)/2),
-                ((float)Gdx.graphics.getHeight()/2/metersToPixels)+1);
-        brickShape.setAsBox((leftE1-leftS1)*scale/2-.02f,.5f);
+        bodyDef.position.set(wallLeft.getPosition().x + (left1/2) + .5f, ((float)Gdx.graphics.getHeight()/2/metersToPixels)+1);
+        brickShape.setAsBox(left1/2-.02f,.5f);
         fixtureDef.shape = brickShape;
-        Body body = world.createBody(bodyDef);
-        body.createFixture(fixtureDef);
-        body.setUserData(new ObjectUserData());
+        Body bodyL1 = world.createBody(bodyDef);
+        bodyL1.setUserData(new ObjectUserData(0, left1));
+        bodyL1.createFixture(fixtureDef);
+        bodyL1.setLinearVelocity(0, gravity);
+    }
+    private void makeRowLeft2(){
+        PolygonShape brickShape = new PolygonShape();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(wallCenter.getPosition().x - (left2/2) - 1.5f, ((float)Gdx.graphics.getHeight()/2/metersToPixels)+1);
+        brickShape.setAsBox(left2/2-.02f,.5f);
+        fixtureDef.shape = brickShape;
+        Body bodyL2 = world.createBody(bodyDef);
+        bodyL2.setUserData(new ObjectUserData(1, left2));
+        bodyL2.createFixture(fixtureDef);
+        bodyL2.setLinearVelocity(0, gravity);
+    }
+    private void makeRowLeft3(){
+        PolygonShape brickShape = new PolygonShape();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(wallCenter.getPosition().x + (right1/2) + 1.5f, ((float)Gdx.graphics.getHeight()/2/metersToPixels)+1);
+        brickShape.setAsBox(right1/2-.02f,.5f);
+        fixtureDef.shape = brickShape;
+        Body bodyL2 = world.createBody(bodyDef);
+        bodyL2.setUserData(new ObjectUserData(2, right1));
+        bodyL2.createFixture(fixtureDef);
+        bodyL2.setLinearVelocity(0, gravity);
+    }
+    private void makeRowLeft4(){
+        PolygonShape brickShape = new PolygonShape();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(wallRight.getPosition().x - (right2/2) - .5f, ((float)Gdx.graphics.getHeight()/2/metersToPixels)+1);
+        brickShape.setAsBox(right2/2-.02f,.5f);
+        fixtureDef.shape = brickShape;
+        Body bodyL2 = world.createBody(bodyDef);
+        bodyL2.setUserData(new ObjectUserData(3, right2));
+        bodyL2.createFixture(fixtureDef);
+        bodyL2.setLinearVelocity(0, gravity);
+    }
+
+    private void changeDirection(){
+        Random random = new Random();
+        int left = random.nextInt(3);
+        int right = random.nextInt(3);
+        if(left == 0 && left1 >= 0.5f){
+            left1 -= 0.5f;
+            left2 += 0.5f;
+        }
+        else if(left == 2 && left2 >= 0.5f){
+            left1 += 0.5f;
+            left2 -= 0.5f;
+        }
+        if(right == 0 && right1 >= 0.5f){
+            right1 -= 0.5f;
+            right2 += 0.5f;
+        }
+        else if(right == 2 && right2 >= 0.5f){
+            right1 += 0.5f;
+            right2 -= 0.5f;
+        }
     }
 }
