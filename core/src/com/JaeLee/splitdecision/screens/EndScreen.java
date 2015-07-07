@@ -44,8 +44,9 @@ public class EndScreen implements Screen {
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         white = new BitmapFont(Gdx.files.internal("font/mainFont.fnt"));
         System.out.println(GameMode.bestCount);
-        title = new Label(""+GameMode.bestCount, new Label.LabelStyle(white, Color.WHITE));
+        title = new Label("Best Score: "+GameMode.bestCount, new Label.LabelStyle(white, Color.WHITE));
         table.add(title);
+        stage.addActor(table);
 
         Gdx.input.setInputProcessor(new InputController() {
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
