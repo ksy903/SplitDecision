@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -41,6 +42,7 @@ public class GameScreen implements Screen {
     private Sprite manSprite, brickSprite;
     private SpriteBatch batch;
     private Array<Body> tmpBodies = new Array<Body>();
+
 
     @Override
     public void render(float delta) {
@@ -221,7 +223,7 @@ public class GameScreen implements Screen {
         Body otherBox = world.createBody(bodyDef);
         otherBox.createFixture(fixtureDef);
 
-        //Using Joints. Make defiition.
+        /*Using Joints. Make defiition.
         DistanceJointDef ditanceJointDef = new DistanceJointDef();
         ditanceJointDef.bodyA = otherBox;
         ditanceJointDef.bodyB = box;
@@ -237,6 +239,7 @@ public class GameScreen implements Screen {
         ropeJointDef.localAnchorB.set(0,0);
 
         world.createJoint(ropeJointDef);
+        */
 
         boxTwo.dispose();
         groundShape.dispose();
