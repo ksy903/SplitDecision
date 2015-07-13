@@ -43,7 +43,6 @@ public class EndScreen implements Screen {
         table.setFillParent(true);
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         white = new BitmapFont(Gdx.files.internal("font/mainFont.fnt"));
-        System.out.println(GameMode.bestCount);
         title = new Label("Best Score: "+GameMode.bestCount, new Label.LabelStyle(white, Color.WHITE));
         table.add(title);
         stage.addActor(table);

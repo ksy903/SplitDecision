@@ -5,7 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -28,11 +31,18 @@ public class MainMenu implements Screen{
     private Label title;
     private Table table;
     private TextButton game, exit, instructions;
+    private Sprite logo, backdrop;
+    private SpriteBatch batch;
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+        backdrop.draw(batch);
+        logo.draw(batch);
+        batch.end();
 
         stage.act(delta);
         stage.draw();
@@ -48,8 +58,16 @@ public class MainMenu implements Screen{
     @Override
     public void show() {
         stage = new Stage();
-
+        batch = new SpriteBatch();
         Gdx.input.setInputProcessor(stage);
+
+        logo = new Sprite(new Texture(Gdx.files.internal("SplitDecision.png")));
+        logo.setSize(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/7);
+        logo.setPosition(Gdx.graphics.getWidth()/2 - (logo.getWidth()/2), Gdx.graphics.getHeight() * 0.8f);
+
+        backdrop = new Sprite(new Texture(Gdx.files.internal("MenuBackDrop.jpg")));
+        backdrop.setSize((Gdx.graphics.getWidth()) , Gdx.graphics.getHeight());
+        backdrop.setPosition(0,0);
 
         atlas = new TextureAtlas(Gdx.files.internal("MainButton.pack"));
         skin = new Skin(atlas);
@@ -68,7 +86,7 @@ public class MainMenu implements Screen{
         textButtonStyle.font = white;
 
         exit = new TextButton("EXIT", textButtonStyle);
-        exit.addListener(new ClickListener(){
+        exit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
@@ -89,7 +107,7 @@ public class MainMenu implements Screen{
         instructions.pad(15);
         //TODO give function to instructions button
 
-        title = new Label("Split Decision", new Label.LabelStyle(white, Color.WHITE));
+        title = new Label("", new Label.LabelStyle(white, Color.WHITE));
 
         Gdx.input.setInputProcessor(stage);
         table.add(title);

@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -26,7 +25,7 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
 
-public class GameMode implements Screen {
+public class BrickOnly implements Screen {
     private int colorCounter;
     private World world;
     private Box2DDebugRenderer debugRenderer;
@@ -37,7 +36,7 @@ public class GameMode implements Screen {
     private final float TIMESTEP = 1 / 60f;
     private final int VELOCITYITERATIONS = 8, POSITIONITERATION = 3;
     private Vector2[] borderSize = new Vector2[]{
-            new Vector2(0.5f, ((float)Gdx.graphics.getHeight() / 2) / metersToPixels),
+            new Vector2(0.5f, ((float) Gdx.graphics.getHeight() / 2) / metersToPixels),
             new Vector2(-0.5f, ((float)Gdx.graphics.getHeight() / 2) / metersToPixels),
             new Vector2(-0.5f, -((float)Gdx.graphics.getHeight() / 2) / metersToPixels),
             new Vector2(0.5f, -((float)Gdx.graphics.getHeight() / 2) / metersToPixels),
@@ -48,10 +47,8 @@ public class GameMode implements Screen {
     private Array<Body> tmpBodies = new Array<Body>();
     public static int bestCount = 0;
     private int currentCount = 0;
+    private Texture backdropImg;
     private SpriteBatch batch;
-    private Sprite backdrop;
-    private int pointerLeft, pointerRight;
-    private boolean left, right;
 
     //Keeping objects in right-ish size.
     private static final int VIRTUAL_WIDTH = 1920;
@@ -63,7 +60,7 @@ public class GameMode implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         world.step(TIMESTEP, VELOCITYITERATIONS, POSITIONITERATION);
@@ -73,48 +70,15 @@ public class GameMode implements Screen {
         world.getBodies(tmpBodies);
 
         batch.begin();
-        backdrop.draw(batch);
-        Sprite sprites = new Sprite(new Texture(Gdx.files.internal("White.png")));
-        sprites.setRotation(shipLeft.getAngle() * MathUtils.radiansToDegrees);
-        sprites.setSize(metersToPixels, 0.5f * metersToPixels);
-
-        Sprite line = new Sprite(new Texture(Gdx.files.internal("Red.png")));
-        line.setSize(Gdx.graphics.getWidth(), 1);
-        line.setPosition(0, Gdx.graphics.getHeight()/4);
-        line.draw(batch);
-
-
-        sprites.setPosition((float)Gdx.graphics.getWidth()/2 + (shipLeft.getPosition().x * metersToPixels) - (sprites.getWidth()/2), (float)Gdx.graphics.getHeight()/2 + (shipLeft.getPosition().y * metersToPixels)- (sprites.getHeight()/2));
-        sprites.draw(batch);
-        sprites.setPosition((float)Gdx.graphics.getWidth()/2 + (shipRight.getPosition().x * metersToPixels) - (sprites.getWidth()/2), (float)Gdx.graphics.getHeight()/2 + (shipRight.getPosition().y * metersToPixels) - (sprites.getHeight()/2));
-        sprites.draw(batch);
-
         for(Body body:tmpBodies){
             if(body != null && body.getUserData() instanceof ObjectUserData){
                 Sprite sprite = new Sprite(((ObjectUserData) body.getUserData()).texture);
-                sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
-
                 sprite.setSize(((ObjectUserData) body.getUserData()).size1 * metersToPixels, metersToPixels);
-                sprite.setPosition((float)Gdx.graphics.getWidth()/2 + ((wallLeft.getPosition().x + (((ObjectUserData) body.getUserData()).size1/2) + .5f) * metersToPixels) - (sprite.getWidth() / 2),
+                sprite.setPosition((float)Gdx.graphics.getWidth()/2 + ((wallLeft.getPosition().x + (left1/2) + .5f) * metersToPixels) - (sprite.getWidth() / 2),
                         (float)Gdx.graphics.getHeight()/2 + ((body.getPosition().y * metersToPixels)) - (sprite.getHeight() / 2));
+                sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
                 sprite.draw(batch);
-
-                sprite.setSize(((ObjectUserData) body.getUserData()).size2 * metersToPixels, metersToPixels);
-                sprite.setPosition((float)Gdx.graphics.getWidth()/2 + ((wallCenter.getPosition().x - (((ObjectUserData) body.getUserData()).size2/2) - 1.5f) * metersToPixels) - (sprite.getWidth() / 2),
-                        (float)Gdx.graphics.getHeight()/2 + ((body.getPosition().y * metersToPixels)) - (sprite.getHeight() / 2));
-                sprite.draw(batch);
-
-                sprite.setSize(((ObjectUserData) body.getUserData()).size3 * metersToPixels, metersToPixels);
-                sprite.setPosition((float)Gdx.graphics.getWidth()/2 + ((wallCenter.getPosition().x + (((ObjectUserData) body.getUserData()).size3/2) + 1.5f) * metersToPixels) - (sprite.getWidth() / 2),
-                        (float)Gdx.graphics.getHeight()/2 + ((body.getPosition().y * metersToPixels)) - (sprite.getHeight() / 2));
-                sprite.draw(batch);
-
-                sprite.setSize(((ObjectUserData) body.getUserData()).size4 * metersToPixels, metersToPixels);
-                sprite.setPosition((float)Gdx.graphics.getWidth()/2 + ((wallRight.getPosition().x - (((ObjectUserData) body.getUserData()).size4/2) - .5f) * metersToPixels) - (sprite.getWidth() / 2),
-                        (float)Gdx.graphics.getHeight()/2 + ((body.getPosition().y * metersToPixels)) - (sprite.getHeight() / 2));
-                sprite.draw(batch);
-
-                if(!((ObjectUserData) body.getUserData()).reproduced && body.getPosition().y + 0.49f <= ((float)Gdx.graphics.getHeight()/2/metersToPixels)){
+                if(!((ObjectUserData) body.getUserData()).reproduced && body.getPosition().y + 0.5f <= ((float)Gdx.graphics.getHeight()/2/metersToPixels)){
                     ((ObjectUserData) body.getUserData()).reproduced = true;
                     colorCounter++;
                     changeDirection();
@@ -133,11 +97,6 @@ public class GameMode implements Screen {
         }
         batch.end();
 
-        if(shipLeft.getPosition().y + 0.25f < -((float)Gdx.graphics.getHeight()/4/metersToPixels) || shipRight.getPosition().y + 0.25f < -((float)Gdx.graphics.getHeight()/4/metersToPixels)){
-            if(currentCount/4 > bestCount)
-                bestCount = currentCount/4;
-            ((Game)Gdx.app.getApplicationListener()).setScreen(new EndScreen());
-        }
         gravity -= 0.005;
         debugRenderer.render(world, camera.combined);
     }
@@ -174,9 +133,6 @@ public class GameMode implements Screen {
     }
     @Override
     public void show() {
-        backdrop = new Sprite(new Texture(Gdx.files.internal("GameBackdrop.png")));
-        backdrop.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        backdrop.setPosition(0,0);
         colorCounter = 0;
         gravity = -9.8f;
         world = new World(new Vector2(0, gravity), true);
@@ -328,96 +284,25 @@ public class GameMode implements Screen {
         body.setLinearVelocity(0, gravity);
         body.setUserData(new ObjectUserData(left1, left2, right1, right2, setColor()));
     }
-
     private void changeDirection(){
         Random random = new Random();
-        if(left){
-            if(pointerLeft == 1){
-                if(left1 <= 0.5f){
-                    left = false;
-                }
-                else{
-                    left1 -= 0.5f;
-                    left2 += 0.5f;
-                }
-            }
-            else if(pointerLeft == 2){
-                if(left1 <= 3.5){
-                    left = false;
-                }
-                else{
-                    left1 -= 0.5f;
-                    left2 += 0.5f;
-                }
-            }
-            else if(pointerLeft == 3){
-                if(left2 <= 3.5){
-                    left = false;
-                }
-                else{
-                    left2 -= 0.5f;
-                    left1 += 0.5f;
-                }
-            }
-            else{
-                if(left2 <= 0.5f){
-                    left = false;
-                }
-                else{
-                    left2 -= 0.5f;
-                    left1 += 0.5f;
-                }
-            }
+        int left = random.nextInt(3);
+        int right = random.nextInt(3);
+        if(left == 0 && left1 >= 0.5f){
+            left1 -= 0.5f;
+            left2 += 0.5f;
         }
-        else if(!left){
-            System.out.println("left value changing");
-            pointerLeft = random.nextInt(4)+1;
-            left = true;
+        else if(left == 2 && left2 >= 0.5f){
+            left1 += 0.5f;
+            left2 -= 0.5f;
         }
-
-        if(right){
-            if(pointerRight == 1){
-                if(right1 <= 0.5f){
-                    right = false;
-                }
-                else{
-                    right1 -= 0.5f;
-                    right2 += 0.5f;
-                }
-            }
-            else if(pointerRight == 2){
-                if(right1 <= 3.5){
-                    right = false;
-                }
-                else{
-                    right1 -= 0.5f;
-                    right2 += 0.5f;
-                }
-            }
-            else if(pointerRight == 3){
-                if(right2 <= 3.5){
-                    right = false;
-                }
-                else{
-                    right2 -= 0.5f;
-                    right1 += 0.5f;
-                }
-            }
-            else{
-                if(right2 <= 0.5f){
-                    right = false;
-                }
-                else{
-                    right2 -= 0.5f;
-                    right1 += 0.5f;
-                }
-            }
-
+        if(right == 0 && right1 >= 0.5f){
+            right1 -= 0.5f;
+            right2 += 0.5f;
         }
-        else if(!right){
-            System.out.println("right value changing");
-            pointerRight = random.nextInt(4)+1;
-            right = true;
+        else if(right == 2 && right2 >= 0.5f){
+            right1 += 0.5f;
+            right2 -= 0.5f;
         }
     }
     private Texture setColor(){
@@ -443,6 +328,6 @@ public class GameMode implements Screen {
         else if(colorCounter % 7 == 6){
             t = new Texture(Gdx.files.internal("Violet.png"));
         }
-            return t;
+        return t;
     }
 }
