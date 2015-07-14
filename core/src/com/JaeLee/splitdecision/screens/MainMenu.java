@@ -1,5 +1,7 @@
 package com.JaeLee.splitdecision.screens;
 
+import com.JaeLee.splitdecision.screens.countdown.Go;
+import com.JaeLee.splitdecision.screens.countdown.Three;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -98,7 +100,7 @@ public class MainMenu implements Screen{
         game.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameMode());
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new Three());
             }
         });
         game.pad(15);
