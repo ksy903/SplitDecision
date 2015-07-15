@@ -370,7 +370,6 @@ public class GameMode implements Screen {
             }
         }
         else if(!left){
-            System.out.println("left value changing");
             pointerLeft = random.nextInt(4)+1;
             left = true;
         }
@@ -415,7 +414,6 @@ public class GameMode implements Screen {
 
         }
         else if(!right){
-            System.out.println("right value changing");
             pointerRight = random.nextInt(4)+1;
             right = true;
         }
