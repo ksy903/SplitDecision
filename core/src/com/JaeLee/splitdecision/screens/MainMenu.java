@@ -32,7 +32,7 @@ public class MainMenu implements Screen{
     private BitmapFont white;
     private Label title;
     private Table table;
-    private TextButton game, exit, instructions;
+    private TextButton game, exit, instructions, settings;
     private Sprite logo, backdrop;
     private SpriteBatch batch;
 
@@ -104,6 +104,14 @@ public class MainMenu implements Screen{
             }
         });
         game.pad(15);
+
+        settings = new TextButton("SETTINGS", textButtonStyle);
+        settings.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new Settings());
+            }
+        });
 
         instructions = new TextButton("INSTRUCTIONS", textButtonStyle);
         instructions.pad(15);

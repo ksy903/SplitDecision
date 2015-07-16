@@ -420,7 +420,7 @@ public class GameMode implements Screen {
     }
     private Texture setColor(){
         Texture t = new Texture(Gdx.files.internal("Red.png"));
-        if(colorCounter % 7 == 0){
+        if(colorCounter % 7 == 0) {
             t = new Texture(Gdx.files.internal("Red.png"));
         }
         else if(colorCounter % 7 == 1){
