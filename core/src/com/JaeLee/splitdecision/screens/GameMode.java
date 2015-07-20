@@ -114,7 +114,7 @@ public class GameMode implements Screen {
                         (float)Gdx.graphics.getHeight()/2 + ((body.getPosition().y * metersToPixels)) - (sprite.getHeight() / 2));
                 sprite.draw(batch);
 
-                if(!((ObjectUserData) body.getUserData()).reproduced && body.getPosition().y + 0.49f <= ((float)Gdx.graphics.getHeight()/2/metersToPixels)){
+                if(!((ObjectUserData) body.getUserData()).reproduced && body.getPosition().y + 0.45f <= ((float)Gdx.graphics.getHeight()/2/metersToPixels)){
                     ((ObjectUserData) body.getUserData()).reproduced = true;
                     colorCounter++;
                     changeDirection();
@@ -132,13 +132,14 @@ public class GameMode implements Screen {
             }
         }
         batch.end();
-
+        /*
         if(shipLeft.getPosition().y + 0.25f < -((float)Gdx.graphics.getHeight()/4/metersToPixels) || shipRight.getPosition().y + 0.25f < -((float)Gdx.graphics.getHeight()/4/metersToPixels)){
             if(currentCount/4 > bestCount)
                 bestCount = currentCount/4;
             ((Game)Gdx.app.getApplicationListener()).setScreen(new EndScreen());
         }
-        gravity -= 0.005;
+        */
+        gravity -= 0.002;
         debugRenderer.render(world, camera.combined);
     }
 
@@ -351,6 +352,21 @@ public class GameMode implements Screen {
                 }
             }
             else if(pointerLeft == 3){
+                if(left2 == Gdx.graphics.getWidth() / 2 * 0.3f / metersToPixels){
+                    left = false;
+                }
+                else{
+                    if(left1 > left2){
+                        left2 += 0.5f;
+                        left1 -= 0.5f;
+                    }
+                    else{
+                        left2 -= 0.5f;
+                        left1 += 0.5f;
+                    }
+                }
+            }
+            else if(pointerLeft == 4){
                 if(left2 <= 3.5){
                     left = false;
                 }
@@ -370,7 +386,7 @@ public class GameMode implements Screen {
             }
         }
         else if(!left){
-            pointerLeft = random.nextInt(4)+1;
+            pointerLeft = random.nextInt(5)+1;
             left = true;
         }
 
@@ -394,6 +410,21 @@ public class GameMode implements Screen {
                 }
             }
             else if(pointerRight == 3){
+                if(right1 == Gdx.graphics.getWidth() / 2 * 0.3f / metersToPixels){
+                    right = false;
+                }
+                else{
+                    if(right1 > right2){
+                        right2 += 0.5f;
+                        right1 -= 0.5f;
+                    }
+                    else{
+                        right2 -= 0.5f;
+                        right1 += 0.5f;
+                    }
+                }
+            }
+            else if(pointerRight == 4){
                 if(right2 <= 3.5){
                     right = false;
                 }
@@ -414,7 +445,7 @@ public class GameMode implements Screen {
 
         }
         else if(!right){
-            pointerRight = random.nextInt(4)+1;
+            pointerRight = random.nextInt(5)+1;
             right = true;
         }
     }
