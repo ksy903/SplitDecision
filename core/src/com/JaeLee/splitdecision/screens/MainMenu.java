@@ -112,6 +112,7 @@ public class MainMenu implements Screen{
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new Settings());
             }
         });
+        settings.pad(15);
 
         instructions = new TextButton("INSTRUCTIONS", textButtonStyle);
         instructions.pad(15);
@@ -128,6 +129,9 @@ public class MainMenu implements Screen{
         table.row();
         table.add(instructions);
         table.getCell(instructions).spaceBottom(100);
+        table.row();
+        table.add(settings);
+        table.getCell(settings).spaceBottom(100);
         table.row();
         table.add(exit);
         stage.addActor(table);
